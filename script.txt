@@ -1,0 +1,6 @@
+ssh z3278107@grieg.cse.unsw.edu.au
+POIUpoiu12345_
+source /srvr/$USER/env
+pg start
+pg end
+log out

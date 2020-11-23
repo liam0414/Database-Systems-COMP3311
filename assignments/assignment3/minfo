@@ -1,0 +1,62 @@
+#!/usr/bin/env python
+# COMP3311 20T3 Ass3 ... print info about cast and crew for Movie
+
+import sys
+import psycopg2
+from helpers import getMovieList, printMovieList, getActors, getCrews, printActorsCrews, getListAtGivenYear
+
+# set up some globals
+
+usage = "Usage: minfo 'MovieTitlePattern' [Year]"
+db = None
+
+# process command-line args
+
+argc = len(sys.argv)
+if argc == 2:
+    partial_title = sys.argv[1]
+elif argc == 3:
+    partial_title = sys.argv[1]
+    if not sys.argv[2].isdigit():
+        print(usage)
+        exit(1)
+    year = int(sys.argv[2])
+else:
+    print(usage)
+    exit()
+
+# manipulate database
+
+try:
+    db = psycopg2.connect("dbname=imdb")
+    cur = db.cursor()
+    if argc == 2:
+        res = getMovieList(partial_title, cur)
+    if argc == 3:
+        res = getListAtGivenYear(partial_title, year, cur)
+
+    if len(res) == 0:
+        if argc == 2:
+            print(f"No movie matching '{partial_title}'")
+        if argc == 3:
+            print(f"No movie matching '{partial_title}' {year}")
+        exit(1)
+    elif len(res) == 1:
+        printMovieList(res, partial_title)
+        movieID = res[0][2]
+        actors = getActors(movieID, cur)
+        crews = getCrews(movieID, cur)
+        print("===============")
+        printActorsCrews(actors, crews)
+    else:
+        print(f"Movies matching '{partial_title}'")
+        print("===============")
+        printMovieList(res, partial_title)
+    # ... add your code here ...
+
+except psycopg2.Error as err:
+    print("DB error: ", err)
+finally:
+    if db:
+        db.close()
+

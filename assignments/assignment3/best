@@ -1,0 +1,31 @@
+#!/usr/bin/python
+# COMP3311 20T3 Ass3 ... print name, year, ratings of top N movies
+
+import sys
+import psycopg2
+from helpers import getBestNMovies
+
+top_N = 0
+usage = "Usage: best [N]"
+db = None
+
+argc = len(sys.argv)
+if argc == 1:
+    top_N = 10
+elif argc == 2 and sys.argv[1].isdigit() and int(sys.argv[1]) > 0:
+    top_N = sys.argv[1]
+else:
+    print(usage)
+    exit(1)
+
+try:
+    db = psycopg2.connect("dbname=imdb")
+    cur = db.cursor()
+    getBestNMovies(top_N, cur)
+
+except psycopg2.Error as err:
+    print("DB error: ", err)
+finally:
+    if db:
+        db.close()
+

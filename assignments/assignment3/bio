@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+# COMP3311 20T3 Ass3 ... get Name's biography/filmography
+
+import sys
+import psycopg2
+from helpers import getBioUsingName, getBioUsingNameYear, printBio, getFilography
+
+partial_name = ""
+usage = "Usage: bio 'NamePattern' [Year]"
+db = None
+
+argc = len(sys.argv)
+if argc == 2:
+    partial_name = sys.argv[1]
+elif argc == 3:
+    partial_name = sys.argv[1]
+    if not sys.argv[2].isdigit():
+        print(usage)
+        exit(1)
+    year = int(sys.argv[2])
+else:
+    print(usage)
+    exit(1)
+
+try:
+    db = psycopg2.connect("dbname=imdb")
+    cur = db.cursor()
+    res = getBioUsingName(partial_name, cur) if argc == 2 \
+        else getBioUsingNameYear(partial_name, year, cur)
+
+    if len(res) == 0:
+        print(f"No name matching '{partial_name}'") if argc == 2 \
+            else print(f"No name matching '{partial_name}' {year}")
+        exit(1)
+    elif len(res) == 1:
+        print("Filmography for ", end='')
+        printBio(res)
+        print("===============")
+        getFilography(res[0][3], cur)
+    else:
+        print(f"Name matching '{partial_name}'")
+        print("===============")
+        printBio(res)
+    cur.close()
+except psycopg2.Error as err:
+    print("DB error: ", err)
+finally:
+    if db:
+        db.close()
+

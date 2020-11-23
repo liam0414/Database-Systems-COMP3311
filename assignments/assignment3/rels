@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+# COMP3311 20T3 Ass3 ... print info about different releases for Movie
+
+import sys
+import psycopg2
+#from helpers import whatever, functions, you, need
+from helpers import getMovieReleases, getMovieList, printMovieList, printMovieReleases
+# set up some globals
+partial_title = ""
+usage = "Usage: rels 'PartialMovieTitle'"
+db = None
+
+# process command-line args
+
+argc = len(sys.argv)
+if argc != 2:
+    print(usage)
+    exit(1)
+partial_title = sys.argv[1]
+
+try:
+    db = psycopg2.connect("dbname=imdb")
+    cur = db.cursor()
+    res = getMovieList(partial_title, cur)
+    if len(res) == 0:
+        print(f"No movie matching '{partial_title}'")
+        exit(1)
+    elif len(res) == 1:
+        movieID = res[0][2]
+        res1 = getMovieReleases(movieID, cur) 
+        if not res1:
+            print (f"{res[0][0]} ({res[0][1]}) has no alternative releases")
+        else:
+            print(f"{res[0][0]} ({res[0][1]}) was also released as")
+            printMovieReleases(res1)
+    else:
+        print(f"Movies matching '{partial_title}'")
+        print("===============")
+        printMovieList(res, partial_title)
+    cur.close()
+except psycopg2.Error as err:
+    print("DB error: ", err)
+finally:
+    if db:
+        db.close()
