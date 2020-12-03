@@ -13,22 +13,26 @@ b. What functional dependencies can we infer do not hold by inspection of the fo
 	AB->C
 C. Suppose that we have a relation schema R(A,B,C) representing a relationship between two entity sets E and F with keys A and B respectively, and suppose that R has (at least) the functional dependencies A → B and B → A. Explain what this tells us about the relationship between E and F.
 
+	The A → B tells us that every A value in R has exactly one corresponding B value, and similarly B → A tells us that every B value has exactly one corresponding A value. In other words, the relationship must be 1:1.
 
 ## 2. Consider the relation R(A,B,C,D,E,F,G) and the set of functional dependencies F = { A → B, BC → F, BD → EG, AD → C, D → F, BEG → FA } compute the following:
 
 a. A+
 	AB
 b. ACEG+
+	A->A
+	A->B
+	BC->F
+	BEG->FA
 	ABCEFG
 c. BD+
+
 	ABCDEFG
 
 How to get candidate keys from FDs: if a closure has all the attributes
 
 
 ## 3. Consider the relation R(A,B,C,D,E) and the set set of functional dependencies F = { A → B, BC → E, ED → A }
-
-
 3NF:
 BCNF+
 single attribute RHS needs to be part of any candidate key
@@ -36,6 +40,12 @@ single attribute RHS needs to be part of any candidate key
 BCNF:
 2 attribute table is in BCNF
 LHS must contain a candidate key
+
+
+a.
+
+
+
 
 a. List all of the candidate keys for R.
 	ACD

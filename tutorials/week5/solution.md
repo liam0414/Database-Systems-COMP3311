@@ -5,15 +5,23 @@ $1 means first variable, however, it is not recommended
 CREATE VIEW
 	TABLE(attr1, attr2,...)
 AS
-SELECT ...
-FROM ...
-
+...
 ;
 ```
+CREATE OR REPLACE FUNCTION() RETURNS RESULT
+AS $$
+DECLARE
+
+BEGIN
+
+END;
+$$ language plpgsql
+
 
 -PLpgSQL functions (only for postgresql)
 a) write a SQL function in database
 b) query database results from a different programming languga and use that langugae(python)
+
 ```sql
 CREATE OR REPLACE 
 	functionName(param1, param2,...)
@@ -26,6 +34,7 @@ BEING
 END;
 $$ LANGUAGE plpgsql
 ```
+
 :: type cast
 := is just equal
 for i in 1..n loop
@@ -75,7 +84,7 @@ BEGIN
 END;
 $$ language plpgsql;
 ```
-1. Write a simple PLpgSQL function that returns the square of its argument value. It is used as follows:
+# 1. Write a simple PLpgSQL function that returns the square of its argument value. It is used as follows:
 PLpgsql functions
 ```sql
 mydb=> select sqr(4);
@@ -105,7 +114,7 @@ select sqr('5');			--this won't work, input is string
 
 ```
 
-2. Write a PLpgSQL function that spreads the letters in some text. It is used as follows:
+# 2. Write a PLpgSQL function that spreads the letters in some text. It is used as follows:
 ```sql
 insert space
 mydb=> select spread('My Text');
@@ -114,68 +123,49 @@ mydb=> select spread('My Text');
  M y   T e x t
 (1 row)
 
-CREATE OR REPLACE FUNCTION
-	spread(t text) returns text
+CREATE OR REPLACE FUNCTION spread(str text) RETURNS text
 AS $$
 DECLARE
-	result text:= '';
-	i integer;
+	result text := '';
+	i integer := 1;
 BEGIN
-	i := 1;
-	-- for(i=1; i<=length;i++), string starts from 1 in sql
-	for i in 1 .. length(t) loop
-		result := result || substr(t, i, 1) || ' ';
+	for i in 1 .. length(str) loop
+		result = result || substring(str, i, 1) || ' ';
 	end loop;
-	-- there is a trailing space, we can use trim function to get rid of it
-	-- result := trim(trailing ' ' from result);
 	return result;
 END;
 $$ language plpgsql;
+
 ```
-3. Write a PLpgSQL function to return a table of the first n positive integers.
-
-The fuction has the following signature:
+# 3. Write a PLpgSQL function to return a table of the first n positive integers.
 ```sql
-CREATE OR REPLACE FUNCTION
-	seq(n integer) returns setof integer --list of results in the table
-AS $$
-DECLARE
-	i integer; -- declare index when having a loop
-BEGIN
-	for i in 1 .. n loop
-		return next i; -- put i into the results using return next, appending i into the set
+create or replace function seq(n integer) returns setof integer
+as $$
+declare
+	i integer;
+begin
+	for i in 1 .. n
+	loop
+		return next i;
 	end loop;
-END;
-
+end;
 $$ language plpgsql;
 ```
 
-4. Generalise the previous function so that it returns a table of integers, starting from lo up to at most hi, with an increment of inc. The function should also be able to count down from lo to hi if the value of inc is negative. An inc value of 0 should produce an empty table. Use the following function header:
-
+# 4. Generalise the previous function so that it returns a table of integers, starting from lo up to at most hi, with an increment of inc. The function should also be able to count down from lo to hi if the value of inc is negative. An inc value of 0 should produce an empty table. Use the following function header:
 ```sql
-CREATE OR REPLACE FUNCTION
-	seq(lo int, hi int, inc int) returns setof integer --list of results in the table
-AS $$
-DECLARE
-	i integer; -- declare index when having a loop
-	result integer;
-BEGIN
+create or replace function seq(lo int, hi int, inc int) returns setof integer
+as $$
+declare
+	i integer;
+begin
 	for i in 0 .. (hi-lo)/inc loop
 		return next (lo + i*inc);
 	end loop;
-END;
-
+end;
 $$ language plpgsql;
-
-alternative
-	if then
-	elseif
-	else
-
-	end if;
 ```
-
-5. Re-implement the seq(int) function from above as an SQL function, and making use of the generic seq(int,int,int) function defined above.
+# 5. Re-implement the seq(int) function from above as an SQL function, and making use of the generic seq(int,int,int) function defined above.
 ```SQL
 CREATE OR REPLACE FUNCTION
 	seq(integer) returns setof integer 
@@ -184,7 +174,7 @@ as $$
 $$ language sql;
 ```
 
-6. Create a factorial function based on the above sequence returning functions.
+# 6. Create a factorial function based on the above sequence returning functions.
 ```sql
 CREATE OR REPLACE FUNCTION
 	fac(n integer) returns integer
@@ -202,7 +192,7 @@ Sells(bar:string, beer:string, price:real)
 Frequents(drinker:string, bar:string)
 ```
 
-7. notes
+# 7. notes
 	* when doing string concat, we need to concat string to something
 	* be careful with this extended new line
 	* if we want to get every record from the database, we can do 'rec record'.
@@ -213,32 +203,23 @@ Frequents(drinker:string, bar:string)
 			 Australia Hotel+
 			 Lord Nelson    +
 			(1 row)
-
 ```sql
-create or replace function
-	hotelsIn(_addr text) returns text
+create or replace function hotelsIn(_addr text) returns text
 as $$
 declare
-	_name text;
-	_result text := '';	-- when doing string concat, we need to concat string to something
+	_hotel text;
+	_result text := '';
 begin
-	-- for every name in the query, concat it to the result and return it at the end of the loop
-	for _name in
-		select name from Bars where addr=_addr loop
-		_result := _result || _name || e'\n';	-- be careful with this extended new line
+	for _hotel in (select name from bars where addr=_addr)
+	loop
+		_result = _result || _hotel || e'\n';
 	end loop;
 	return _result;
 end;
 $$ language plpgsql;
-
-create or replace function
-	hotelsIn(_addr text) returns record
-as $$
-	select * from bars where addr=_addr;
-$$ language sql;
 ```
 
-8. Write a new PLpgSQL function called hotelsIn() that takes a single argument giving the name of a suburb and returns the names of all hotels in that suburb. The hotel names should all appear on a single line, as in the following examples:
+# 8. Write a new PLpgSQL function called hotelsIn() that takes a single argument giving the name of a suburb and returns the names of all hotels in that suburb. The hotel names should all appear on a single line, as in the following examples:
 
 ```sql
 create or replace function
@@ -250,7 +231,7 @@ declare
 begin
 	for _name in
 		select name from Bars where addr=_addr loop
-		_result := _result || _name || e' ';
+		_result := _result || _name || ' ';
 	end loop;
 	if (length(_result) = 0) then
 		return 'There are no hotels in ' || _addr;
@@ -261,9 +242,7 @@ end;
 $$ language plpgsql;
 ```
 
-9. Write a PLpgSQL procedure happyHourPrice that accepts the name of a hotel, the name of a beer and the number of dollars to deduct from the price, and returns a new price. The procedure should check for the following errors:
-
-select
+# 9. Write a PLpgSQL procedure happyHourPrice that accepts the name of a hotel, the name of a beer and the number of dollars to deduct from the price, and returns a new price. The procedure should check for the following errors:
 
 ```sql
 create or replace function
@@ -288,16 +267,16 @@ end;
 $$ language plpgsql;
 ```
 
-10. The hotelsIn function above returns a formatted string giving details of the bars in a suburb. If we wanted to return a table of records for the bars in a suburb, we could use a view as follows:
+# 10. The hotelsIn function above returns a formatted string giving details of the bars in a suburb. If we wanted to return a table of records for the bars in a suburb, we could use a view as follows:
 
 ```sql
-create or replace function hotelsIn(_addr text) returns setof Bars 
+create or replace function hotelsInS(text) returns setof Bars 
 as $$
-	select * from Bars where addr=_addr;
+	select * from Bars where addr=$1;
 $$ language sql;
 ```
 
-11. plpgsql version
+# 11. plpgsql version
 
 ```sql
 create or replace function hotelsIn(_addr text) returns setof Bars 
@@ -387,7 +366,17 @@ as $$
 $$ language sql;
 ```
 
-13. Write a PLpgSQL function to produce a report giving details of branches:
+# 13. Write a PLpgSQL function to produce a report giving details of branches:
+name and address of branch
+list of customers who hold accounts at that branch
+total amount in accounts held at that branch
+
+Use the following format for each branch:
+
+Branch: Clovelly, Clovelly Rd.
+Customers:  Chuck Ian James
+Total deposits: $   8860.00
+
 ```sql
 create or replace function details(_location text) returns text
 as $$
@@ -413,7 +402,7 @@ end;
 $$ language plpgsql;
 ```
 
-14
+# 14
 ```sql
 create or replace function unitName(_ouid integer) returns text
 as $$
@@ -446,3 +435,9 @@ end;
 $$ language plpgsql;
 ```
 
+# 15. In the previous question, you needed to know the internal ID of an OrgUnit. This is unlikely, so write a function that takes part of an OrgUnit.longname and returns the ID or NULL if there is no such unit. If there is more than one matching unit, return the ID of the first matching unit. Implement this as an SQL function, which allows case-insensitive matching:
+
+create or replace function unitID(partName text) returns integer
+as $$
+	select id from OrgUnit where longname ilike '%'||partname||'%';
+$$ language sql;

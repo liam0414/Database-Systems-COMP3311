@@ -1,6 +1,28 @@
 ssh z3278107@grieg.cse.unsw.edu.au
 POIUpoiu12345_
 source /srvr/$USER/env
-pg start
-pg end
-log out
+
+useful concept:
+ER design (ER diagram)
+Relational data model (box and arrow)
+SQL schema (create table)
+
+useful links:
+1. all data types
+https://www.postgresql.org/docs/9.5/datatype.html
+
+2. 
+serializability
+https://fereidani.com/tools/scheduleparser
+
+3.
+normalisation tool
+http://www.ict.griffith.edu.au/~jw/normalization/ind.php
+
+
+concepts to study tonight
+
+trigger functions
+performance tuning, function calls
+BCNF and 3NF
+translate sql to relational algebra 

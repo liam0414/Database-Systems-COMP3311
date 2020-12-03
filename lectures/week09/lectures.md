@@ -121,7 +121,7 @@
 	Who drinks beers made by Carlton?
 	CarltonBeers = Sel[manf=Carlton](Beers)
 	Tmp = Likes Join[beer=name] CarltonBeers
-	Result(drinker) = Proj[drinker)Tmp
+	Result(drinker) = Proj[drinker] Tmp
 
 ## 3.5 Outer Join
 	R ⨝C S does not include in its result

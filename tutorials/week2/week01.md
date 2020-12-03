@@ -7,10 +7,17 @@
 	* describe constraints on data
 
 ## 3. relationship vs relations
-	A row in a table represents a relationship among a set of values
-	In the relational model, the term relation is used to refer a table, while the term tuple is used to refer a row.
+	Relationship
+		* describes an association between n specific entities
+		* a collection of relationships forms a relationship set
+		* a relationship can have associated attributes
 
-	Conceptual data models use concepts such as entities, attributes, and relationships. An entity represents a real-world object or concept. An attribute represents some property of interest that further describes an entity. A relationship among two or more entities represents an association among the entities
+	In the relational model, the term relation is used to refer a table, while the term tuple is used to refer a row.
+		* describes an association between a collection of attributes
+		* an instance of a relation is a set of tuples of attribute values
+		* a relation can be used to model a set of entities
+		* a relation can also be used to model relationship sets (n-ary relationships with associated attributes)
+		* every relation has a primary key
 
 ## 4. What kind of data, relationships and constraints exist in this scenario? (ask questions)
 
@@ -67,10 +74,28 @@
 	if the attribute is attached to the relationship, it belongs to the initiator
 
 	for diagram (a)
-	* researcher has to work on one or more project.
-	* research project only has the attribute project title
-	* the amount of time spent for the project,
+		the time each researcher spends on each project that they are involved with
+	for diagram (b)
+		because time is an attribute of project, it refers to the total time allocated to the project by all researchers
+
 
 ## 8. The following two ER diagrams give alternative design choices for associating a person with their favourite types of food. Explain when you might choose to use the second rather than the first:
 	
 	When searching a multivalued attribute, a DBMS must search each value in the attribute, most likely scanning the contents of the attribute sequentially. A sequential search is the slowest type of search available. So it is better to create a new entity to represent the multivalue attribute
+
+
+domain vs type
+
+create domain is basically existing_type + constraint (i.e. a restricted version of the existing type)
+
+create type is more flexible: you can create enumerated types, tuple types, range types and new base types.
+Enumerated types require you specify a list of values, and define an ordering.
+
+Tuple types define a list of attribute_name+attribute_type
+
+Range and base types are more advanced and define genuinely new types.
+
+The one place where create domain and create type might look similar is
+
+create domain Colour as text check value in ('red','green','blue');
+create type Colour as enum ('red','green','blue');

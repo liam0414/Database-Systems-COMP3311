@@ -1,0 +1,150 @@
+ id |         name         |   genre   
+----+----------------------+-----------
+  1 | Grand Horde          | country
+  1 | Grand Horde          | pop
+  2 | We lost the Empire   | metal
+  2 | We lost the Empire   | rock
+  3 | Roaring Boy          | country
+  3 | Roaring Boy          | hip-hop
+  3 | Roaring Boy          | metal
+  3 | Roaring Boy          | pop
+  3 | Roaring Boy          | post-rock
+  3 | Roaring Boy          | rock
+  4 | Nine Inch Horde      | country
+  4 | Nine Inch Horde      | hip-hop
+  4 | Nine Inch Horde      | metal
+  4 | Nine Inch Horde      | pop
+  4 | Nine Inch Horde      | post-rock
+  4 | Nine Inch Horde      | rock
+  5 | Roaring Gang         | hip-hop
+  5 | Roaring Gang         | rock
+  6 | Nine Inch Sky        | blues
+  6 | Nine Inch Sky        | country
+  6 | Nine Inch Sky        | hip-hop
+  6 | Nine Inch Sky        | metal
+  7 | We lost the Nails    | blues
+  7 | We lost the Nails    | country
+  7 | We lost the Nails    | hip-hop
+  8 | We lost the Sky      | blues
+  8 | We lost the Sky      | post-rock
+  8 | We lost the Sky      | rock
+  9 | After the Sea        | hip-hop
+  9 | After the Sea        | post-rock
+  9 | After the Sea        | rock
+ 10 | Massive Mountains    | blues
+ 10 | Massive Mountains    | country
+ 10 | Massive Mountains    | pop
+ 10 | Massive Mountains    | post-rock
+ 10 | Massive Mountains    | rock
+ 11 | We lost the Bricks   | blues
+ 11 | We lost the Bricks   | country
+ 11 | We lost the Bricks   | hip-hop
+ 11 | We lost the Bricks   | pop
+ 11 | We lost the Bricks   | rock
+ 12 | Black Eyed Boy       | country
+ 12 | Black Eyed Boy       | hip-hop
+ 12 | Black Eyed Boy       | rock
+ 13 | Blue Floyd           | hip-hop
+ 13 | Blue Floyd           | metal
+ 13 | Blue Floyd           | pop
+ 13 | Blue Floyd           | post-rock
+ 13 | Blue Floyd           | rock
+ 14 | Roaring Funk         | blues
+ 14 | Roaring Funk         | hip-hop
+ 14 | Roaring Funk         | pop
+ 14 | Roaring Funk         | rock
+ 15 | Black Mountains      | blues
+ 15 | Black Mountains      | rock
+ 16 | We lost the Effect   | blues
+ 16 | We lost the Effect   | hip-hop
+ 16 | We lost the Effect   | metal
+ 16 | We lost the Effect   | pop
+ 16 | We lost the Effect   | rock
+ 17 | Nine Inch Peas       | rock
+ 18 | Velvet Sky           | blues
+ 18 | Velvet Sky           | post-rock
+ 19 | Bring me the Joe     | hip-hop
+ 19 | Bring me the Joe     | pop
+ 19 | Bring me the Joe     | rock
+ 20 | The Horde            | metal
+ 20 | The Horde            | post-rock
+ 20 | The Horde            | rock
+ 21 | Nine Inch Funk       | country
+ 21 | Nine Inch Funk       | pop
+ 21 | Nine Inch Funk       | rock
+ 22 | Roaring Floyd        | blues
+ 22 | Roaring Floyd        | post-rock
+ 23 | Bring me the Sea     | country
+ 23 | Bring me the Sea     | hip-hop
+ 23 | Bring me the Sea     | post-rock
+ 23 | Bring me the Sea     | rock
+ 24 | Velvet Oysters       | blues
+ 24 | Velvet Oysters       | metal
+ 24 | Velvet Oysters       | pop
+ 24 | Velvet Oysters       | rock
+ 25 | Crying Gang          | country
+ 25 | Crying Gang          | rock
+ 26 | Blue Mountains       | country
+ 26 | Blue Mountains       | post-rock
+ 26 | Blue Mountains       | rock
+ 27 | Massive Knights      | pop
+ 27 | Massive Knights      | rock
+ 28 | Roaring Sea          | post-rock
+ 28 | Roaring Sea          | rock
+ 29 | Liquid Bricks        | pop
+ 29 | Liquid Bricks        | rock
+ 30 | All of the Sea       | hip-hop
+ 30 | All of the Sea       | pop
+ 30 | All of the Sea       | rock
+ 31 | All of the Floyd     | rock
+ 32 | Grand Forties        | country
+ 32 | Grand Forties        | hip-hop
+ 32 | Grand Forties        | metal
+ 32 | Grand Forties        | rock
+ 33 | Grand Floyd          | country
+ 33 | Grand Floyd          | hip-hop
+ 33 | Grand Floyd          | pop
+ 33 | Grand Floyd          | post-rock
+ 34 | Grand Ocean          | blues
+ 34 | Grand Ocean          | country
+ 34 | Grand Ocean          | hip-hop
+ 34 | Grand Ocean          | rock
+ 35 | Poor Funk            | country
+ 35 | Poor Funk            | hip-hop
+ 35 | Poor Funk            | metal
+ 35 | Poor Funk            | pop
+ 35 | Poor Funk            | rock
+ 36 | Black Eyed Nails     | metal
+ 36 | Black Eyed Nails     | pop
+ 36 | Black Eyed Nails     | rock
+ 37 | Poor Oysters         | blues
+ 37 | Poor Oysters         | post-rock
+ 37 | Poor Oysters         | rock
+ 38 | Black Vanilla        | pop
+ 38 | Black Vanilla        | rock
+ 39 | We lost the Feelings | country
+ 39 | We lost the Feelings | pop
+ 39 | We lost the Feelings | rock
+ 41 | Roaring Empire       | rock
+ 42 | Nine Inch Sea        | country
+ 42 | Nine Inch Sea        | hip-hop
+ 42 | Nine Inch Sea        | rock
+ 43 | Nine Inch Stones     | blues
+ 43 | Nine Inch Stones     | metal
+ 43 | Nine Inch Stones     | rock
+ 44 | Nine Inch Gang       | hip-hop
+ 44 | Nine Inch Gang       | metal
+ 44 | Nine Inch Gang       | rock
+ 45 | Raging Knights       | rock
+ 46 | Pink Oysters         | metal
+ 46 | Pink Oysters         | post-rock
+ 46 | Pink Oysters         | rock
+ 48 | Poor Knights         | blues
+ 49 | Raging Horde         | blues
+ 49 | Raging Horde         | rock
+ 50 | Roaring Buffalo      | country
+ 50 | Roaring Buffalo      | hip-hop
+ 50 | Roaring Buffalo      | pop
+ 50 | Roaring Buffalo      | rock
+(146 rows)
+

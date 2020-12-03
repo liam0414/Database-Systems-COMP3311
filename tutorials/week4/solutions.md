@@ -1,26 +1,31 @@
-1. yes it matters because eid is referenced by other tables and departments is referenced by worksin relationship, therefore, they have to be declared in the order given in the schema
-2. 
+# 1. Does the order of table declarations above matter?
+
+yes it matters because eid is referenced by other tables and departments is referenced by worksin relationship, therefore, they have to be declared in the order given in the schema
+
+The order matters. We can not insert a Department tuple until there is an Employee tuple available to be the manager of the department. We cannot also insert any WorksIn tuple until you have both the Employee tuple and the Department tuple where the employee works.
+
+# 2. A new government initiative to get more young people into work cuts the salary levels of all workers under 25 by 20%. Write an SQL statement to implement this policy change.
 ```sql
-UPDATE 	Employees
-SET 	salary = salary * (1 - 0.2)
-WHERE 	age < 25;
+update Employees 
+set salary=salary*0.8
+where age < 25;
 ```
-3.
+# 3.
 ```sql
-update Employees
-set e.salary = e.salary * 1.1
-where e.eid in (
-	select e.eid from Employees e join Worksin w on (w.eid=e.eid)
-		join Departments d on (w.did=d.did)
-	where d.dname='Sales'
-)
+update Employees e
+set e.salary=e.salary*1.1
+where eid in
+	(select eid
+	from Departments d, Worksin w
+	where d.dname='Sales' and d.did=w.did
+	);
 ```
 
-4. manager NOT NULL integer references Employees(eid)
+# 4. manager NOT NULL integer references Employees(eid)
 
-5. check (salary >= 15000);
+# 5. salary real check (salary >= 15000),
 
-6. 
+# 6. 
 ```sql
 constraint MaxFullTimeCheck
 	check (1.00 >= (select sum(w.percent)
@@ -29,7 +34,7 @@ constraint MaxFullTimeCheck
 );
 ```
 
-7. 
+# 7. 
 ```sql
 constraint ManagerFullTimeCheck
 	check (1.00 = (select w.percent
@@ -39,24 +44,21 @@ constraint ManagerFullTimeCheck
 );
 ```
 
-8. ON DELETE CLAUSES
-default(throw error)
-on delete cascade (for that item, delete, and propagate the event)
-on delete set null
-on delete set default
+# 8. 
 ```sql
 create table WorksIn (
-      eid     integer references Employees(eid) on delete cascade,
-      did     integer references Departments(did),
-      percent real,
-      primary key (eid,did)
+   eid         integer,
+   did         integer,
+   percent    real,
+   primary key (eid,did),
+   foreign key (eid) references Employees(eid) on delete cascade,
+   foreign key (did) references Departments(did)
 );
 ```
 
-9. remove not null from question 4
+# 9. remove not null from question 4
 
-10.
-
+# 10.
 a. Disallow the deletion of a Departments tuple if any Works tuple refers to it. This is the default behaviour, which would result from the CREATE TABLE definition in the previous question.
 
 b. When a Departments tuple is deleted, also delete all WorksIn tuples that refer to it. This requires adding an ON DELETE CASCADE clause to the definition of WorksIn.
@@ -140,168 +142,159 @@ d. ON DELETE SET DEFAULT ... All of the tuples in the WorksIn relation that have
     5     1      0.75
 ```
 
-12.
 ```sql
--- A natural join is a join that creates an implicit join based on the same column names in the joined tables.
--- essentially it is like joining tables to form a bigger table
-select distinct(s.sname)
-from   Suppliers s natural join Catalog c natural join Parts p
-where  p.colour='red';
-```
+create table Suppliers (
+      sid     integer primary key,
+      sname   text,
+      address text
+);
+create table Parts (
+      pid     integer primary key,
+      pname   text,
+      colour  text
+);
+create table Catalog (
+      sid     integer references Suppliers(sid),
+      pid     integer references Parts(pid),
+      cost    real,
+      primary key (sid,pid)
+);
 
-13. 
-```sql
+-- 12.Find the names of suppliers who supply some red part.
+select distinct s.sname
+from suppliers s
+	join catalog c on c.sid=s.sid
+	join parts p on p.pid=c.pid
+where p.colour='red';
 
-select distinct(c.sid)
-from   Catalog c natural join Parts p
-where  p.colour='red' or p.colour='green';
-```
+select distinct sname
+from   Suppliers natural join Catalog natural join Parts
+where  Parts.colour='red';
 
-14.
-```sql
-select s.sid
-from   Suppliers s natural join Catalog c natural join Parts p
-where  p.colour='red' and s.address like '%221 Packer Street%';
-```
+-- 13.Find the sids of suppliers who supply some red or green part.
+select distinct s.sname, s.sid
+from suppliers s
+	join catalog c on c.sid=s.sid
+	join parts p on p.pid=c.pid
+where p.colour='red' or p.colour='green'
+order by s.sid;
 
-15.
-```sql
--- this is a very tricky questions, note that the supplier has to supply both red and green part
-select distinct(c.sid)
-from   Catalog c natural join Parts p
-where  p.colour='red'
+select distinct C.sid
+from   Parts P, Catalog C
+where  (P.colour='red' or P.colour='green') and C.pid=P.pid;
+
+--14.Find the sids of suppliers who supply some red part or whose address is 221 Packer Street.
+select distinct s.sid
+from suppliers s
+	join catalog c on c.sid=s.sid
+	join parts p on p.pid=c.pid
+where p.colour='red'
+union
+select distinct s.sid
+from suppliers s
+where s.address='221 Packer Street';
+
+select S.sid
+from   Suppliers S
+where  S.address='221 Packer Street'
+       or S.sid in (select C.sid
+                    from   Parts P, Catalog C
+                    where  P.colour='red' and P.pid=C.pid
+                   );
+--15.Find the sids of suppliers who supply some red part and some green part.
+select distinct s.sname, s.sid
+from suppliers s
+	join catalog c on c.sid=s.sid
+	join parts p on p.pid=c.pid
+where p.colour='red'
 intersect
-select distinct(c.sid)
-from   Catalog c natural join Parts p
-where  p.colour='green'
+select distinct s.sname, s.sid
+from suppliers s
+	join catalog c on c.sid=s.sid
+	join parts p on p.pid=c.pid
+where p.colour='green';
 
-```
 
-***** 16 (hard question).
-```sql
--- my-solution
-SELECT s.sid
-FROM Suppliers s JOIN Catalog c on s.sid=c.sid
-GROUP BY s.sid
-HAVING count(c.pid)=(select count(p.pid) from Parts p);
--- not exists = empty set
--- sample solution
-select s.sid
-from   Suppliers s
-where  not exists (
-	select p.pid from Parts p
-    except
-    select c.pid from Catalog c where c.sid = s.sid
+select C.sid
+from   Parts P, Catalog C
+where  P.colour='red' and P.pid=C.pid
+       and exists (select P2.pid
+                   from   Parts P2, Catalog C2
+                   where  P2.colour='green' and C2.sid=C.sid and P2.pid=C2.pid
+                  );
+
+-- 16. Find the sids of suppliers who supply every part.
+
+select sid
+from suppliers
+where not exists(
+	(select pid from parts)
+	except
+	(select pid from catalog where suppliers.sid=catalog.sid)
 );
 
 -- every time you ask question ask each/every
 -- similar pattern
 -- select [ ] from [ ] where not exists[All - specific]
 
-```
-
-17.
-```sql
--- my-solution
-select s.sid
-from   Suppliers s
-where not exists (
-	select p.pid from Parts p where p.colour='red'
-	except
-	select c.pid from Catalog c where c.sid = s.sid
-);
-
---sample solution
-SELECT distinct c.sid
-from Catalog c
+-- 17. Find the sids of suppliers who supply every red part.
+select sid
+from suppliers
 where not exists(
-				select p.pid	--all the red parts and 
-				from Parts p
-				where p.colour='red' and not exists(
-						select c1.pid
-						from Catalog c1
-						where c1.sid=c.sid and c1.pid=p.pid)
-);
-```
-
-*** 18.
-```sql
--- my-solution
-select s.sid
-from   Suppliers s
-where not exists (
-	select p.pid from Parts p where p.colour='red' or p.colour = 'green' -- sells every red part
+	(select pid from parts where colour='red')
 	except
-	select c.pid from Catalog c where c.sid = s.sid
+	(select pid from catalog where suppliers.sid=catalog.sid)
 );
 
--- The EXISTS operator is a boolean operator that tests for existence of rows in a subquery.
--- The NOT operator negates the result of the EXISTS operator. The NOT EXISTS is opposite to EXISTS. It means that if the subquery returns no row, the NOT EXISTS returns true. If the subquery returns one or more rows, the NOT EXISTS returns false.
-SELECT distinct c.sid
-from Catalog c
+-- 18. Find the sids of suppliers who supply every red or green part.
+select sid
+from suppliers
 where not exists(
-				select p.pid	--all the red parts
-				from Parts p
-				where (p.colour='red' or p.colour='green') and not exists(
-						select c1.pid
-						from Catalog c1
-						where c1.sid=c.sid and c1.pid=p.pid)
-);
-```
-19.
-Find the sids of suppliers who supply every red part or supply every green part.
-```sql
--- my-solution
-select s.sid
-from   Suppliers s
-where not exists (
-	select p.pid from Parts p where p.colour='red' -- sells every red part
+	(select pid from parts where colour='red' or colour='green')
 	except
-	select c.pid from Catalog c where c.sid = s.sid
+	(select pid from catalog where suppliers.sid=catalog.sid)
+);
+
+-- 19. Find the sids of suppliers who supply every red part or supply every green part.
+select sid
+from suppliers
+where not exists(
+	(select pid from parts where colour='red')
+	except
+	(select pid from catalog where suppliers.sid=catalog.sid)
 )
-union -- or
-select s.sid
-from   Suppliers s
-where not exists (
-	select p.pid from Parts p where p.colour='green' -- sells every green part
+union
+select sid
+from suppliers
+where not exists(
+	(select pid from parts where colour='green')
 	except
-	select c.pid from Catalog c where c.sid = s.sid
+	(select pid from catalog where suppliers.sid=catalog.sid)
 );
 
-```
+--20. Find pairs of sids such that the supplier with the first sid charges more for some part than the supplier with the second sid.
+select c1.sid, c2.sid
+from catalog c1, catalog c2
+where c1.pid=c2.pid and c1.sid != c2.sid and c1.cost > c2.cost;
 
-20. Find pairs of sids such that the supplier with the first sid charges more for some part than the supplier with the second sid.
 
-```sql
-select c1.sid, c2.sid, c1.pid, c1.cost, c2.cost
-from Catalog c1, Catalog c2
-where c1.sid <> c2.sid and c1.pid=c2.pid and c1.cost > c2.cost;
+--21.Find the pids of parts that are supplied by at least two different suppliers.
+select distinct pid
+from catalog
+group by pid
+having count(sid) >=2
+order by pid;
 
-21. Find the pids of parts that are supplied by at least two different suppliers.
-select c.pid
-from Catalog c
-group by c.pid
-having count(c.pid) >= 2;
-```
-22. Find the pids of the most expensive part(s) supplied by suppliers named "Yosemite Sham".
+select distinct C.pid
+from   Catalog C
+where  exists(select C1.sid
+              from   Catalog C1
+              where  C1.pid = C.pid and C1.sid != C.sid
+             )
 
-```sql
-select c.pid
-from Catalog c
-join suppliers s on s.sid=c.sid
-where c.cost >= ALL(select cost from Catalog) and s.sname='Yosemite Sham';
-
-select c.pid
-from Catalog c
-join suppliers s on s.sid=c.sid
-where c.cost >= ANY(select cost from Catalog) and s.sname='Yosemite Sham';
-```
-ANY and ALL behave as existential and universal quantifiers respectively
-
-23.Find the pids of parts supplied by every supplier at a price less than 200 dollars (if any supplier either does not supply the part or charges more than 200 dollars for it, the part should not be selected).
-```sql
-select c.pid
-from   catalog c
-where  c.cost < 200.00
-group by c.pid
+-- 23. Find the pids of parts supplied by every supplier at a price less than 200 dollars
+select C.pid
+from   Catalog C
+where  C.price < 200.00
+group by C.pid
 having count(*) = (select count(*) from Suppliers);

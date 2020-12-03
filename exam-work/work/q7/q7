@@ -1,0 +1,90 @@
+#!/usr/bin/python3
+# COMP3311 20T2 Final Exam
+# Q7: tracklist for album, given by Albums.id
+#     show performers/instruments for each track
+
+import sys
+import psycopg2
+
+# get album information
+def getalbuminfo(albumID, cur):
+    query = """
+        SELECT title, year, genre
+        FROM Albums
+        WHERE id = %s
+    """
+    cur.execute(query,[albumID])
+    res=cur.fetchall()
+    return res
+
+
+# get a list of songs by the given album
+def getsongs(albumID, cur):
+    query = """
+        SELECT trackNo, title, id
+        FROM Songs
+        WHERE on_album = %s
+        ORDER BY trackNo
+    """
+    cur.execute(query,[albumID])
+    res=cur.fetchall()
+    return res
+
+def getinsts(songid, cur):
+    query = """
+        SELECT pe.name, string_agg(instrument, ',' order by instrument)
+        FROM PlaysOn po
+            join Performers pe on pe.id=po.performer
+        WHERE po.song = %s
+        group by pe.name
+        ORDER BY pe.name
+    """
+    cur.execute(query,[songid])
+    res=cur.fetchall()
+    return res
+
+db = None
+cur = None
+usage = f"Usage: {sys.argv[0]} AlbumID"
+
+# process command-line args
+
+if len(sys.argv) < 2:
+    print(usage)
+    exit(1)
+albumID = sys.argv[1]
+if not albumID.isnumeric():
+    print(usage)
+    exit(1)
+
+try:
+    db = psycopg2.connect("dbname=music")
+    cur = db.cursor()
+    albuminfo = getalbuminfo(albumID, cur)
+    if len(albuminfo) == 0:
+        print('Invalid album ID')
+        exit(1)
+    for info in albuminfo:
+        title, year, genre = info
+        print(f'{title} ({year}) ({genre})')
+        print('========================================')
+        songs = getsongs(albumID, cur)
+        for song in songs:
+            trackno,title,id=song
+            print(f'{trackno:2d}. {title}')
+            list_1 = getinsts(id, cur)
+            if len(list_1) == 0:
+                print("%8s%s" % (' ', 'The whole group'))
+
+            for rec in list_1:
+                name, instrument=rec
+                print("%8s%s: %s" % (' ', name, instrument))
+
+except psycopg2.Error as err:
+    print("DB error: ", err)
+finally:
+    if cur:
+        cur.close()
+    if db:
+        db.close()
+

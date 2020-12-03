@@ -1,0 +1,19 @@
+# COMP3311 20T3 Final Exam Q12
+
+(a)
+
+there is an edge from T2 -> T1 (T2 R(Y) -> T1 W(Y)) and there is an edge from T1->T2 (T1 W(X) -> T2 W(X))
+Schedule is not conflict serializable because its conflict graph is cyclic.
+
+(b)
+in the concurrent schedule
+X: T3 writes final
+Y: T2 reads init, T1 writes final
+
+T1:                 W(Y) W(X)
+
+T2:  R(Y) W(X)
+
+T3:                                 W(X)
+
+is the view equivalent

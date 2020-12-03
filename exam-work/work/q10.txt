@@ -1,0 +1,24 @@
+# COMP3311 20T3 Final Exam Q10
+
+(a)
+Flights ... fid -> from, to, distance, departs, arrives, price
+Aircraft ... aid -> aname, range
+Certified ... -> no non-trivial fd
+Employees ... eid -> ename, salary
+
+(b)
+A table is in BCNF if and only if for every non-trivial FD, the LHS is a superkey.
+the Flights ... fid -> from, to, distance, departs, arrives, price violates BCNF
+as the relation is not a BCNF, the schema is not BCNF
+
+in practical, there is no way to know whick aircraft or pilot will be flying for a practical Flights
+wherefore, it can be improved by adding aid into the Flights relation
+
+Flights(fid, aid, from, to, distance, departs, arrives, price)
+Aircraft(aid, aname, range)
+Certified(employee, aircraft)
+Employees(eid, ename, salary)
+
+where aid is a foreign key of Aircraft(aid)
+
+

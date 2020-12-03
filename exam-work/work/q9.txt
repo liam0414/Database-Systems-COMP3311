@@ -1,0 +1,66 @@
+# COMP3311 20T3 Final Exam Q9
+
+(a)
+When the last member of a group leaves (i.e. all members are noted as departed)
+
+the group should be recorded as disbanded
+use the value of member's departure data as the date of disbanding
+joined (date the performer joined the group), departed (date the performer left the group).
+
+
+-- trigger to handle dropping a 
+
+CREATE FUNCTION function_name () RETURNS trigger
+AS
+$$
+    DECLARE
+        declarations;
+    BEGIN
+        statements;
+    END; 
+
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE TRIGGER che
+    BEFORE operatio 
+    ON group
+    FOR EACH ROW
+    EXECUTE PROCEDURE function_name()
+    ;
+
+(b)
+
+a new Groups entry should be made, using the value of current_date as the formation date
+
+you can assume that there is some method available to generate new group id's
+
+(write an assumption to this effect; any reasonable assumption is acceptable)
+
+all musicians who were members of the old group should be entered as members of the new group
+
+all musicians where were members of the old group should be marked as having left the old group
+
+
+-- update the status of old group and insert new group
+CREATE FUNCTION update_group() RETURNS trigger
+AS
+$$
+DECLARE
+    _id        integer;
+    _name      text;
+    _formed     date;
+    _disbanded  date;
+BEGIN
+    old.disbanded = now();
+    select id,name,formed,disbanded into _id, _name, _formed, _disbanded
+	from Groups where id=new.id;
+    new.name = _name
+    return new;
+END; 
+
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_group BEFORE update on Groups
+FOR EACH ROW EXECUTE PROCEDURE update_group();

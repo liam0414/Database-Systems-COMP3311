@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 # COMP3311 20T3 Ass3 ... get Name's biography/filmography
 
 import sys
